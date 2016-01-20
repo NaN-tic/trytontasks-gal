@@ -18,7 +18,9 @@ setup(name=PACKAGE,
     url=WEBSITE,
     download_url="https://bitbucket.org/trytonspain/trytontasks-gal",
     packages=find_packages(),
-    package_data={},
+    package_data={
+        '': ['*.txt', '*.xml'],
+        },
     scripts=[],
     classifiers=[
         'Development Status :: 5 - Production/Stable',
@@ -33,6 +35,8 @@ setup(name=PACKAGE,
     license=LICENSE,
     install_requires=[
         'invoke>=0.11.1',
+        'functools32', # remove with py3.x
+        'xmltodict',
         ],
     extras_require={},
     zip_safe=False,
