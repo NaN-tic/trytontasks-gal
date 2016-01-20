@@ -116,9 +116,9 @@ def install(database, password='admin', modules=
         print "Create products..."
         create_product_categories()
         create_products()
-    #~ if 'product_price_list' in to_install:
-        #~ print "Create price lists..."
-        #~ create_price_lists(language=language)
+    if 'product_price_list' in to_install:
+        print "Create price lists..."
+        create_price_lists(language=language)
     if 'sale' in to_install:
         print "Create sales..."
         create_sales()
@@ -127,20 +127,20 @@ def install(database, password='admin', modules=
         print "Create sale opportunities..."
         create_opportunities()
         process_opportunities()
-    #~ if 'purchase' in to_install:
-        #~ print "Create purchases..."
-        #~ create_purchases()
-        #~ process_purchases(config=pconfig)
-    #~ if 'production' in to_install:
-        #~ print "Create productions..."
-        #~ create_boms()
-        #~ create_production_requests()
-    #~ if 'stock' in to_install:
-        #~ print "Create Stock Inventory..."
-        #~ create_inventory(config=pconfig)
-        #~ print "Process Stock Shipments..."
-        #~ process_customer_shipments(config=pconfig)
-        #~ process_supplier_shipments(config=pconfig)
+    if 'purchase' in to_install:
+        print "Create purchases..."
+        create_purchases()
+        process_purchases(config=pconfig)
+    if 'production' in to_install:
+        print "Create productions..."
+        create_boms()
+        create_production_requests()
+    if 'stock' in to_install:
+        print "Create Stock Inventory..."
+        create_inventory(config=pconfig)
+        print "Process Stock Shipments..."
+        process_customer_shipments(config=pconfig)
+        process_supplier_shipments(config=pconfig)
     if 'account_invoice' in to_install:
         print "Process Customer Invoices..."
         process_customer_invoices(config=pconfig)
@@ -156,6 +156,33 @@ def dump(database):
     command = 'pg_dump -d %(database)s -U %(username)s > ./psql_%(database)s.sql' % {
         'database': database,
         'username': parse_uri(uri).username,
+        }
+    run(command)
+
+@task()
+def restore(database, filename):
+    'Create PSQL Database and restore SQL file'
+    config.update_etc('./trytond.conf')
+    uri = config.get('database', 'uri')
+
+    print "Restore PSQL database: " + t.green(database)
+
+    if not os.path.isfile(filename):
+        print t.red('ERROR:')+' File NOT found ' + filename
+        return
+
+    print "Create database..."
+    command = 'createdb %(database)s -U %(username)s' % {
+        'database': database,
+        'username': parse_uri(uri).username,
+        }
+    run(command)
+
+    print "Load database..."
+    command = 'psql -d %(database)s -U %(username)s < ./%(filename)s' % {
+        'database': database,
+        'username': parse_uri(uri).username,
+        'filename': filename,
         }
     run(command)
 
