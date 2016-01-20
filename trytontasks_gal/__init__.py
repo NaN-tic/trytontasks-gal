@@ -97,10 +97,10 @@ def install(database, password='admin', modules=
         create_payment_terms()
         if 'account_es' in to_install:
             module = 'account_es'
-            fs_id = 'es'
+            fs_id = 'pgc_0'
         elif 'account_es_pyme' in to_install:
             module = 'account_es_pyme'
-            fs_id = 'es_pyme'
+            fs_id = 'pgc_pymes_0'
         else:
             module = 'account'
             fs_id = 'account_template_root_%s' % language[:2]
